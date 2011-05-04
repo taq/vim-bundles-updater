@@ -1,0 +1,3 @@
+Just save the update_vim_bundles on your $PATH and run it to update
+all your Vim bundles used with Vim-pathogen.
+If there are any changes, they will be merged and displayed.

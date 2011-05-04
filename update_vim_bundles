@@ -1,0 +1,31 @@
+#!/bin/bash
+logfile=/tmp/update_vim_bundles_$$.log
+changes=""
+
+echo log file is $logfile
+for dir in $(find ~/.vim/bundle/* -maxdepth 0 -type d)
+do
+   plugin_name=$(echo $dir | cut -f6 -d'/')
+   echo "checking $plugin_name"
+   cd $dir
+   local_id=$(git log --oneline | head -n1 | cut -f1 -d' ')
+   git fetch 
+   diff=$(git diff origin/master)
+   if [ -z "$diff" ]; then
+      continue
+   fi
+   echo "   repository updated!"
+   echo "   writing changes to the log file ..."
+   changes=$(git log --oneline origin/master $local_id..)
+   echo "$plugin_name" >> $logfile
+   echo "----------------------------------" >> $logfile
+   echo $changes >> $logfile
+   echo " " >> $logfile
+   echo "   mergin' changes ..."
+   git merge origin/master 1>&2 >/dev/null
+   echo "   merged!"
+done
+
+if [ -n "$changes" ]; then
+   vim $logfile
+fi
