@@ -9,7 +9,7 @@ do
    echo "checking $plugin_name"
    cd $dir
    local_id=$(git log --oneline | head -n1 | cut -f1 -d' ')
-   git fetch 
+   git fetch 1>&2 >/dev/null
    diff=$(git diff origin/master)
    if [ -z "$diff" ]; then
       continue
