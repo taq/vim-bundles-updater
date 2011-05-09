@@ -9,7 +9,7 @@ do
    echo "checking $plugin_name"
    cd $dir
    local_id=$(git log --oneline | head -n1 | cut -f1 -d' ')
-   git fetch 1>&2 >/dev/null
+   git fetch -q &> >/dev/null
    diff=$(git diff origin/master)
    if [ -z "$diff" ]; then
       continue
@@ -22,7 +22,7 @@ do
    echo $changes >> $logfile
    echo " " >> $logfile
    echo "   mergin' changes ..."
-   git merge origin/master 1>&2 >/dev/null
+   git merge origin/master &> /dev/null
    echo "   merged!"
 done
 
