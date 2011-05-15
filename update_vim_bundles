@@ -1,6 +1,14 @@
 #!/bin/bash
 logfile=/tmp/update_vim_bundles_$$.log
 changes=""
+showchanges="no"
+
+while getopts "cv" OPTION; do
+   case $OPTION in
+      c) showchanges="console";;
+      v) showchanges="editor";;
+   esac
+done
 
 echo log file is $logfile
 for dir in $(find ~/.vim/bundle/* -maxdepth 0 -type d)
@@ -27,5 +35,10 @@ do
 done
 
 if [ -n "$changes" ]; then
-   echo $logfile
+   if [ "$showchanges" == "console" ]; then
+      echo $logfile
+   fi      
+   if [ "$showchanges" == "editor" ]; then
+      vim $logfile
+   fi      
 fi
