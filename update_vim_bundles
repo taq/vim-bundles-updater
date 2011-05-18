@@ -36,7 +36,7 @@ done
 
 if [ -n "$changes" ]; then
    if [ "$showchanges" == "console" ]; then
-      echo $logfile
+      cat $logfile
    fi      
    if [ "$showchanges" == "editor" ]; then
       vim $logfile
