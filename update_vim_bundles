@@ -3,6 +3,12 @@ logfile=/tmp/update_vim_bundles_$$.log
 changes=""
 showchanges="no"
 
+green='\e[32m'
+red='\e[31m'
+reset='\e[00m'
+bold_on='\033[1m'
+bold_off='\033[0m'
+
 while getopts "cv" OPTION; do
    case $OPTION in
       c) showchanges="console";;
@@ -10,11 +16,11 @@ while getopts "cv" OPTION; do
    esac
 done
 
-echo log file is $logfile
+echo -e "log file is $bold_on$logfile$bold_off"
 for dir in $(find ~/.vim/bundle/* -maxdepth 0 -type d)
 do
    plugin_name=$(echo $dir | cut -f6 -d'/')
-   echo "checking $plugin_name"
+   echo -e "checking $bold_on$plugin_name$bold_off"
    cd $dir
    local_id=$(git log --oneline | head -n1 | cut -f1 -d' ')
    git fetch -q &> /dev/null
@@ -22,13 +28,12 @@ do
    if [ -z "$diff" ]; then
       continue
    fi
-   echo "   repository updated!"
-   echo "   writing changes to the log file ..."
+   echo -e "   $green repository updated! $reset"
+   echo    "   writing changes to the log file ..."
    changes=$(git log --oneline origin/master $local_id..)
-   echo "$plugin_name" >> $logfile
-   echo "----------------------------------" >> $logfile
-   echo "$changes" >> $logfile
-   echo " " >> $logfile
+   echo -e "$green$plugin_name$reset" >> $logfile
+   echo    "$changes" >> $logfile
+   echo -e "\n" >> $logfile
    echo "   mergin' changes ..."
    git merge origin/master &> /dev/null
    echo "   merged!"
@@ -41,4 +46,6 @@ if [ -n "$changes" ]; then
    if [ "$showchanges" == "editor" ]; then
       vim $logfile
    fi      
+else
+   echo -e "$red no updates. $reset"
 fi
