@@ -28,12 +28,12 @@ do
    if [ -z "$diff" ]; then
       continue
    fi
-   echo -e "   $green repository updated! $reset"
+   echo -e "  $green repository updated! $reset"
    echo    "   writing changes to the log file ..."
    changes=$(git log --oneline origin/master $local_id..)
    echo -e "$green$plugin_name$reset" >> $logfile
    echo    "$changes" >> $logfile
-   echo -e "\n" >> $logfile
+   echo " " >> $logfile
    echo "   mergin' changes ..."
    git merge origin/master &> /dev/null
    echo "   merged!"
@@ -41,11 +41,12 @@ done
 
 if [ -n "$changes" ]; then
    if [ "$showchanges" == "console" ]; then
+      echo " "
       cat $logfile
    fi      
    if [ "$showchanges" == "editor" ]; then
       vim $logfile
    fi      
 else
-   echo -e "$red no updates. $reset"
+   echo -e "$red\bno updates. $reset"
 fi
