@@ -2,6 +2,7 @@
 logfile=/tmp/update_vim_bundles_$$.log
 changes=""
 showchanges="no"
+clean="no"
 
 green='\e[32m'
 red='\e[31m'
@@ -9,10 +10,17 @@ reset='\e[00m'
 bold_on='\033[1m'
 bold_off='\033[0m'
 
-while getopts "cv" OPTION; do
+function cleanup {
+   echo -e "cleaning up ..."
+   git prune 
+   git gc 
+}
+
+while getopts "cvl" OPTION; do
    case $OPTION in
       c) showchanges="console";;
       v) showchanges="editor";;
+      l) clean="yes";;
    esac
 done
 
@@ -25,9 +33,14 @@ do
    local_id=$(git log --oneline | head -n1 | cut -f1 -d' ')
    git fetch -q &> /dev/null
    diff=$(git diff origin/master)
+
    if [ -z "$diff" ]; then
+      if [ "$clean"=="yes" ]; then
+         cleanup
+      fi
       continue
    fi
+
    echo -e "  $green repository updated! $reset"
    echo    "   writing changes to the log file ..."
    changes=$(git log --oneline origin/master $local_id..)
@@ -37,6 +50,10 @@ do
    echo "   mergin' changes ..."
    git merge origin/master &> /dev/null
    echo "   merged!"
+
+   if [ "$clean"=="yes" ]; then
+      cleanup
+   fi
 done
 
 if [ -n "$changes" ]; then
