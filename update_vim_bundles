@@ -35,7 +35,7 @@ do
    diff=$(git diff origin/master)
 
    if [ -z "$diff" ]; then
-      if [ "$clean"=="yes" ]; then
+      if [ "$clean" == "yes" ]; then
          cleanup
       fi
       continue
@@ -51,7 +51,7 @@ do
    git merge origin/master &> /dev/null
    echo "   merged!"
 
-   if [ "$clean"=="yes" ]; then
+   if [ "$clean" == "yes" ]; then
       cleanup
    fi
 done
